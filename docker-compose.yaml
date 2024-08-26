@@ -1,0 +1,18 @@
+services: 
+
+  webserver:
+    image: nginx
+    volumes: 
+      - './index.html:/usr/share/nginx/html/index.html:ro'
+    ports: 
+      - '80:80'
+
+  node-exporter:
+    image: prom/node-exporter
+    volumes:
+      - /:/host:ro
+    command:
+      - '--path.rootfs=/host'
+    ports:
+      - 9100:9100
+    restart: always
