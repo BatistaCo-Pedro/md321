@@ -1,0 +1,4 @@
+services: 
+  light-sensor:
+    image: python:alpine3.19
+  
