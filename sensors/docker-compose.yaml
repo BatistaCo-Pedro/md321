@@ -1,4 +1,10 @@
 services: 
   light-sensor:
-    image: python:alpine3.19
+    build:
+      context: . 
+    # image: python:dht11
+    privileged: true
+    volumes:
+    - './dht_11.py:/dht_11.py'
+    command: ['python3', '/dht_11.py']
   
