@@ -5,6 +5,6 @@ services:
     # image: python:dht11
     privileged: true
     volumes:
-    - './dht_11.py:/dht_11.py'
-    command: ['python3', '/dht_11.py']
+    - './dht_11.py:/usr/src/myapp/dht_11.py'
+    command: ['python3', './dht_11.py']
   
