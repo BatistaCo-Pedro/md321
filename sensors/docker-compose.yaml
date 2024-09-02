@@ -1,5 +1,5 @@
 services: 
-  light-sensor:
+  temp-sensor:
     build:
       context: . 
     # image: python:dht11
@@ -7,4 +7,22 @@ services:
     volumes:
     - './dht_11.py:/usr/src/myapp/dht_11.py'
     command: ['python3', './dht_11.py']
+
+  web-server:
+    build:
+      context: . 
+    privileged: true
+    ports: 
+      - '8080:8080'
+    volumes:
+    - './webserver.py:/usr/src/myapp/webserver.py'
+    command: ['python3', './webserver.py']
+
+  buzzer:
+    build:
+      context: . 
+    privileged: true
+    volumes:
+    - './buzzer.py:/usr/src/myapp/buzzer.py'
+    command: ['python3', './buzzer.py']
   
