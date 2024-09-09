@@ -15,6 +15,7 @@ services:
     ports: 
       - '8080:8080'
     volumes:
+    - './air_sensor.py:/usr/src/myapp/air_sensor.py'
     - './webserver.py:/usr/src/myapp/webserver.py'
     command: ['python3', './webserver.py']
     
