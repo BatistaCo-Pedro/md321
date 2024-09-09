@@ -21,3 +21,9 @@ scrape_configs:
         'v-c104-03:9182',
         'v-c104-08:9182'
       ]
+
+  - job_name: 'sensors'
+    static_configs:
+      - targets: [
+        '172.17.0.1:8080'
+      ]
