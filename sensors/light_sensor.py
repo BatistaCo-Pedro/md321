@@ -1,8 +1,12 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Author: Matt Hawkins
+# Author's Git: https://bitbucket.org/MattHawkinsUK/
+# Author's website: https://www.raspberrypi-spy.co.uk
 
 import RPi.GPIO as GPIO
-import dht11
 import smbus
+import time
 
 if(GPIO.RPI_REVISION == 1):
     bus = smbus.SMBus(0)
@@ -49,36 +53,15 @@ class LightSensor():
         data = bus.read_i2c_block_data(self.DEVICE,self.ONE_TIME_HIGH_RES_MODE_1)
         return self.convertToNumber(data)
 
-# initialize GPIO
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-GPIO.cleanup()
-
-# read data using pin 14
-instance = dht11.DHT11(pin = 4)
-
-class Server(BaseHTTPRequestHandler):
-    def do_GET(self):
-        result = instance.read()
-        lightSensor = LightSensor()
-
-        while not result.is_valid():  # read until valid values
-            result = instance.read()
-
-        self.send_response(200)
-        self.send_header('Content-Type', 'text/plain')
-        self.end_headers()
-
-        self.wfile.write(f'Temp: {result.temperature}\nHumi: {result.humidity}\nLight: {str(lightSensor.readLight())}'.encode())
-
 def main():
-    webserver = HTTPServer(('0.0.0.0', 8080), Server)
-    print('Web Server starting...')
 
+    sensor = LightSensor()
     try:
-        webserver.serve_forever()
+        while True:
+            print ("Light Level : " + str(sensor.readLight()) + " lx")
+            time.sleep(0.5)
     except KeyboardInterrupt:
         pass
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
