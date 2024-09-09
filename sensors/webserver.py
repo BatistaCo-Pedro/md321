@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from air_sensor import AirSensor
+from distance_sensor import DistanceSensor
 
 import RPi.GPIO as GPIO
 import smbus
@@ -52,6 +53,7 @@ class LightSensor():
 # read data using pin 14
 lightSensor = LightSensor()
 airSensor = AirSensor()
+distanceSensor = DistanceSensor()
 
 class Server(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -61,7 +63,7 @@ class Server(BaseHTTPRequestHandler):
         self.send_header('Content-Type', 'text/plain')
         self.end_headers()
 
-        self.wfile.write(f'Temp: {airResult.temperature}\nHumi: {airResult.humidity}\nLight: {str(lightSensor.readLight())}'.encode())
+        self.wfile.write(f'Temp: {airResult.temperature}\nHumi: {airResult.humidity}\nLight: {str(lightSensor.readLight())}\nDistance: {distanceSensor.read()}'.encode())
 
 def main():
     webserver = HTTPServer(('0.0.0.0', 8080), Server)
