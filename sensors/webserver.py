@@ -56,11 +56,12 @@ GPIO.cleanup()
 
 # read data using pin 14
 instance = dht11.DHT11(pin = 4)
+lightSensor = LightSensor()
+
 
 class Server(BaseHTTPRequestHandler):
     def do_GET(self):
         result = instance.read()
-        lightSensor = LightSensor()
 
         while not result.is_valid():  # read until valid values
             result = instance.read()
