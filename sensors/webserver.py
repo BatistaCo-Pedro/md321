@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
 from air_sensor import AirSensor
 from distance_sensor import DistanceSensor
 
@@ -56,15 +57,28 @@ airSensor = AirSensor()
 distanceSensor = DistanceSensor()
 
 class Server(BaseHTTPRequestHandler):
+    def sendJSON(self, object: object, code: int = 200):
+            self.send_response(code)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            
+            self.wfile.write(json.dumps(object).encode())
+    
     def do_GET(self):
-        airResult = airSensor.read()
-
-        self.send_response(200)
-        self.send_header('Content-Type', 'text/plain')
-        self.end_headers()
-
-        self.wfile.write(f'Temp: {airResult.temperature}\nHumi: {airResult.humidity}\nLight: {str(lightSensor.readLight())}\nDistance: {distanceSensor.read()}'.encode())
-
+        if(self.path == '/air'):
+            airResult = airSensor.read()
+        
+            self.sendJSON({
+                'temperature' : airResult.temperature,
+                'humidity': airResult.humidity
+            })
+        
+        if(self.path == '/distance'):
+            
+            self.sendJSON({
+                'distance': distanceSensor.read()
+            })
+            
 def main():
     webserver = HTTPServer(('0.0.0.0', 8080), Server)
     print('Web Server starting...')
