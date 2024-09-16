@@ -3,7 +3,6 @@ services:
   webserver:
     image: nginx
     volumes: 
-      - './index.html:/usr/share/nginx/html/index.html:ro'
+      - './dashboard:/usr/share/nginx/html:ro'
     ports: 
       - '80:80'
-      

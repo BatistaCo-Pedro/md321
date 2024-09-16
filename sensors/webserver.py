@@ -1,10 +1,25 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+import time
+import threading
 from air_sensor import AirSensor
 from distance_sensor import DistanceSensor
 from light_sensor import LightSensor
 from motion_sensor import MotionSensor
 from sound_sensor import SoundSensor
+
+import paho.mqtt.client as mqtt
+
+def on_connect(client, userdata, flags, reason_code, properties):
+    print(f'Connected to MQTT Broker with result {reason_code}')
+
+def on_message(client, userdata, msg: object):
+    print(msg.topic + ' ' + str(msg.payload))
+
+mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+mqtt_client.on_connect = on_connect
+mqtt_client.on_message = on_message
+mqtt_client.connect('pedropi', 1883, 60)
 
 # read data using pin 14
 lightSensor = LightSensor()
@@ -66,11 +81,24 @@ air_humidity {airResult.humidity}'
             self.end_headers()
             self.wfile.write(response.encode())
                         
+                        
+def read_distance_sensor(sleep: float):
+    while True:
+        distance = distanceSensor.read()
+        mqtt_client.publish('pedropi/distance', distance, qos=2)
+        time.sleep(sleep)
+                                
+
 def main():
     webserver = HTTPServer(('0.0.0.0', 8080), Server)
     print('Web Server starting...')
+    
+    distanceSensorThread = threading.Thread(target=read_distance_sensor, args=(0.5,), daemon=True)
+    distanceSensorThread.start()
 
     try:
+        mqtt_client.loop_start()
+        mqtt_client.publish('pedropi/up', 'true', qos=2)
         webserver.serve_forever()
     except KeyboardInterrupt:
         pass

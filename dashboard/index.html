@@ -1,0 +1,38 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>Dashboard <span id="titleHost"></span></h1>
+        <div>
+            <h2>MQTT Broker</h2>
+            <p>Distance Sensor: <span id="distanceSensorValue"></span>cm</p>
+        </div>
+        <script src="mqtt.min.js"></script>
+        <script>
+            document.querySelector('#titleHost').textContent = window.location.host;
+            const distanceSensorValue = document.querySelector('#distanceSensorValue');
+
+            console.log(mqtt);
+            const broker = `ws://${window.location.host}:9001`
+            const mqttClient = mqtt.connect(broker, {});
+            mqttClient.on('connect', () => {
+                console.log('connected');
+                mqttClient.subscribe('pedropi/#', err => {
+                    if (err) console.err(err);
+                });
+            })
+
+            mqttClient.on('message', (topic, message) => {
+                console.log(`got message from topic ${topic}: ${message}`);
+                switch (topic) {
+                    case 'pedropi/distance':
+                        distanceSensorValue.textContent = parseInt(message);
+                        break;
+                
+                    default:
+                        break;
+                }
+            })
+        </script>
+    </body>
+</html>

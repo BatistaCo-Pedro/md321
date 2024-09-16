@@ -17,6 +17,7 @@ services:
     volumes:
     - './:/usr/src/myapp/'
     command: ['python3', './webserver.py']
+    restart: always
     
   light-sensor:
     build:

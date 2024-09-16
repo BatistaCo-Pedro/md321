@@ -25,5 +25,8 @@ scrape_configs:
   - job_name: 'sensors'
     static_configs:
       - targets: [
-        '172.17.0.1:8080'
+        '172.17.0.1:8080',
+        'mondaymorning:8080',
+        'dragonpi:8080',
+        'maximilian:8080'
       ]
